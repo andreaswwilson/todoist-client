@@ -1,4 +1,4 @@
-package todoistclient
+package todoist
 
 import (
 	"encoding/json"

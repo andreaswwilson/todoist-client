@@ -1,4 +1,4 @@
-package todoistclient
+package todoist
 
 import (
 	"context"
@@ -13,7 +13,8 @@ import (
 
 func TestProject(t *testing.T) {
 	logrus.SetLevel(logrus.ErrorLevel)
-	c := NewClient(os.Getenv("TODOIST_TOKEN"))
+	token := os.Getenv("TODOIST_TOKEN")
+	c := NewClient(token)
 	ctx := context.Background()
 
 	name := fmt.Sprint(time.Now().Unix())
