@@ -1,4 +1,4 @@
-module todoistclient
+module github.com/andreaswwilson/todoist-client
 
 go 1.21.6
 
