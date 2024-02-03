@@ -20,14 +20,17 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-func NewClient(apiKey string) *Client {
+func NewClient(apiKey string) (*Client, error) {
+	if apiKey == "" {
+		return nil, fmt.Errorf("token missing")
+	}
 	return &Client{
 		BaseURL: BaseURL,
 		apiKey:  apiKey,
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
-	}
+	}, nil
 }
 
 func init() {

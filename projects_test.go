@@ -3,6 +3,7 @@ package todoist
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 	"time"
@@ -14,7 +15,10 @@ import (
 func TestProject(t *testing.T) {
 	logrus.SetLevel(logrus.ErrorLevel)
 	token := os.Getenv("TODOIST_TOKEN")
-	c := NewClient(token)
+	c, err := NewClient(token)
+	if err != nil {
+		log.Fatal(err)
+	}
 	ctx := context.Background()
 
 	name := fmt.Sprint(time.Now().Unix())
