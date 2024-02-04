@@ -1,10 +1,12 @@
 package todoist
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -34,7 +36,13 @@ func NewClient(apiKey string) (*Client, error) {
 }
 
 func init() {
-	log.SetReportCaller(true)
+	file, err := os.OpenFile("todoistClient.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err == nil {
+		log.SetReportCaller(true)
+		log.SetOutput(file)
+	} else {
+		log.Info("Failed to log to file, using default stderr")
+	}
 	// log.SetLevel(log.DebugLevel)
 
 }
@@ -58,12 +66,18 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	}
 
 	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	log.WithFields(log.Fields{
+		"Status": res.Status,
+		"Body":   string(body),
+	}).Debug("Response")
+	if err != nil {
+		return err
+	}
+	// Restore the io.ReadCloser to is original state
+	res.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
 		return fmt.Errorf("unknown error, status code: %d, response: %s", res.StatusCode, body)
 	}
 
