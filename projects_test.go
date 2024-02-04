@@ -14,6 +14,7 @@ import (
 
 func TestProject(t *testing.T) {
 	logrus.SetLevel(logrus.ErrorLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 	token := os.Getenv("TODOIST_TOKEN")
 	c, err := NewClient(token)
 	if err != nil {
@@ -55,6 +56,12 @@ func TestProject(t *testing.T) {
 	t.Run("delete project", func(t *testing.T) {
 		err := c.DeleteProject(ctx, projectId)
 		assert.Nil(t, err, "expecting nil error")
+	})
+
+	t.Run("check that deleted projects is not active", func(t *testing.T) {
+		res, err := c.GetProject(ctx, projectId)
+		assert.NotNil(t, err, "expecting nil error")
+		assert.Nil(t, res, "expecting nil result")
 	})
 
 }

@@ -16,7 +16,7 @@ const (
 
 type Client struct {
 	BaseURL    string
-	ApiKey     string
+	apiKey     string
 	HTTPClient *http.Client
 }
 
@@ -26,7 +26,7 @@ func NewClient(apiKey string) (*Client, error) {
 	}
 	return &Client{
 		BaseURL: BaseURL,
-		ApiKey:  apiKey,
+		apiKey:  apiKey,
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
@@ -40,12 +40,12 @@ func init() {
 }
 
 func (c *Client) sendRequest(req *http.Request, v interface{}) error {
-	if c.ApiKey == "" {
+	if c.apiKey == "" {
 		return fmt.Errorf("api token missing")
 	}
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.ApiKey))
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
 
 	log.WithFields(log.Fields{
 		"URL":     req.URL,
